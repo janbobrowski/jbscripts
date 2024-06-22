@@ -1,16 +1,20 @@
 #!/bin/bash
 
-output_script_name=script.sh
+DESCRIPTION="\
+Creates a bash script with shebang line and 755 permissions.
+"
 
-help()
+default_script_name=script.sh
+
+usage()
 {
   THIS_SCRIPT_NAME=$(basename "$0")
-  echo "Creates bash script with shebang line and 755 permissions" >&2
-  echo "Usage: ./$THIS_SCRIPT_NAME [output_script_name=$output_script_name]" >&2
+  echo "Usage: ./$THIS_SCRIPT_NAME [output_script_name=$default_script_name]" >&2
 }
 
 if [ "${1:0:1}" == "-" ]; then
-    help
+    printf "${DESCRIPTION}" >&2
+    usage
     exit 0
 fi
 
@@ -22,6 +26,7 @@ fi
 if (( "${#}" > 0 )); then
   output_script_name="${1}"
 else
+  output_script_name=$default_script_name
   echo "Using default script name: $output_script_name"
 fi
 
