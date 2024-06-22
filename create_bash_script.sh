@@ -14,7 +14,7 @@ if [ "${1:0:1}" == "-" ]; then
     exit 0
 fi
 
-if ! (which jq &>/dev/null); then
+if !(which jq &>/dev/null); then
   echo please install jq
   exit 1
 fi

@@ -14,6 +14,11 @@ if [ "${1:0:1}" == "-" ]; then
     exit 0
 fi
 
+if !(which jq &>/dev/null); then
+  echo please install jq
+  exit 1
+fi
+
 if (( "${#}" > 0 )); then
   output_script_name="${1}"
 else
