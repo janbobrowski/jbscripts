@@ -1,0 +1,13 @@
+# not for execution
+exit 0
+
+# any is more convenient then or
+
+printf "word11\nword22\nword33\nword44\n" | jq -R 'select([test("\\bword1\\b","word2","word3")]|any)'
+
+printf "word11\nword22\nword33\nword44\n" \
+| jq -R '
+  ("word1","word2","word3") as $patterns
+  |select([contains($patterns)]|any)
+'
+
