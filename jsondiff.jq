@@ -1,7 +1,7 @@
 #!/usr/bin/jq -fs
 # script compares objects from the input stream (two first objects, the rest is ignored)
 # script reads input into an array (jq -s parameter)
-# at this moment it works fine for the objects with simmilar structure
+# at this moment it works fine for the objects with similar structure
 
 # $ jq -n '{a:1,b:2},{b:22,c:33}' | ./jsondiff.jq | jq -c
 # {"a":[1],"b":[2,22],"c":[null,33]}
