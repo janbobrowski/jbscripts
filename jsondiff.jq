@@ -10,45 +10,44 @@
 # {"a":1,"b":2}
 # {"b":[22],"c":33}
 
-# function transforms nth object from the input array into the json stream (path-value pairs)
-# n is either 0 (the first object) or 1 (for the second object)
-# so 0 is aded to every path of the first object and 1 to every path of the second object
+# function transforms input into json stream (path-value pairs)
+# and appends n to each path
 # it's like every leaf_value in the first object would be substituted
-#   with an array having the leaf_value on the first position: [leaf_value]
-# and every leaf_value in the second object
-#   with an array having the leaf_value on the second position [null,leaf_value]
-def create_stream($n):
+#   with an array having the leaf_value on the nth (0-based) position
+# n is either 0 or one so this would be [leaf_value] for n==0 and [null,leaf_value] for n==1
+def create_compare_stream($n):
 [
-  .[$n]
-  |tostream
+  tostream
   |select(length==2)
   |.[0]+=[$n]
 ]
 ;
-create_stream(0) as $s0
-|create_stream(1) as $s1
 
-# combine the input streams together
-|$s0+$s1
+def get_different_values_in_the_stream:
+  group_by(.[0][:-1])
+  |map(
+    # select only different values
+    select(.[0][1] != .[1][1])
+    |.[]
+  )
+;
+
+def filter_compare_stream($n):
+  map(
+      select(.[0][-1]==$n)
+      |.[0]|=.[:-1]
+    )
+;
+
+# create streams of values from input and combine
+(.[0]|create_compare_stream(0)) + (.[1]|create_compare_stream(1))
 # group by the original path (without added 0 and 1)
-|group_by(.[0][:-1])
-|map(
-  # select only different values
-  select(.[0][1] != .[1][1])
-) as $diffstream
+|get_different_values_in_the_stream as $diffstream
 # transform the stream of path-value pairs back into the object (keys in the object will be sorted alpabetically)
 | try
-  fromstream($diffstream[][],[[[]]])
+  fromstream($diffstream[],[[[]]])
   catch (
-    $diffstream|
-    (
-      map(map(
-          select(.[0][-1]==0)
-          |.[0]|=.[:-1]
-        )),
-      map(map(
-          select(.[0][-1]==1)
-          |.[0]|=.[:-1]
-        ))
-    ) | fromstream(.[][],[[[]]])
+    $diffstream
+    |(filter_compare_stream(0),filter_compare_stream(1))
+    | fromstream(.[],[[[]]])
   )
