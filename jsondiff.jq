@@ -1,10 +1,14 @@
 #!/usr/bin/jq -fs
 # script compares objects from the input stream (two first objects, the rest is ignored)
 # script reads input into an array (jq -s parameter)
-# at this moment it works fine for the objects with similar structure
-
+# for the objects with similar structure (matching leaf values)
+# it shows differences as a singe object
 # $ jq -n '{a:1,b:2},{b:22,c:33}' | ./jsondiff.jq | jq -c
 # {"a":[1],"b":[2,22],"c":[null,33]}
+# if it is not possible differences are shown as two objects
+# jq -n '{a:1,b:2},{b:[22],c:33}' | ./jsondiff.jq | jq -c
+# {"a":1,"b":2}
+# {"b":[22],"c":33}
 
 # function transforms nth object from the input array into the json stream (path-value pairs)
 # n is either 0 (the first object) or 1 (for the second object)
@@ -31,6 +35,20 @@ create_stream(0) as $s0
 |map(
   # select only different values
   select(.[0][1] != .[1][1])
-)
+) as $diffstream
 # transform the stream of path-value pairs back into the object (keys in the object will be sorted alpabetically)
-|fromstream(.[][],[[[]]])
+| try
+  fromstream($diffstream[][],[[[]]])
+  catch (
+    $diffstream|
+    (
+      map(map(
+          select(.[0][-1]==0)
+          |.[0]|=.[:-1]
+        )),
+      map(map(
+          select(.[0][-1]==1)
+          |.[0]|=.[:-1]
+        ))
+    ) | fromstream(.[][],[[[]]])
+  )
