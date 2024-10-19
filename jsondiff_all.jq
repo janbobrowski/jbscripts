@@ -15,7 +15,7 @@ def create_compare_stream($n):
 |map(
   # show different values as array of two values
   if (.[0][1] != .[1][1]) then .
-  # show equal values as single value    
+  # show equal values as single value
   else [.[0]|(.[0]|=.[:-1])] end
   |.[]
 )
