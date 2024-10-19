@@ -13,8 +13,10 @@ def create_compare_stream($n):
 # group by the original path (without added 0 and 1)
 |group_by(.[0][:-1])
 |map(
-  # select only different values with the same path
-  select(.[0][1] != .[1][1])
+  # show different values as array of two values
+  if (.[0][1] != .[1][1]) then .
+  # show equal values as single value    
+  else [.[0]|(.[0]|=.[:-1])] end
   |.[]
 )
 # transform back the stream of path-value pairs into single json
