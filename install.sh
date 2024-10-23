@@ -14,17 +14,17 @@ fi
 
 if [ $(grep -ic "jbscripts" ~/.bashrc) -gt 0 ]; then
     echo .bashrc already contains "jbscripts"
-    echo Please add manually the following line at the end .bashrc file: PATH=\$PATH:~/${PWD##*/}
+    echo Please add manually the following line at the end .bashrc file: PATH=\$PATH:${PWD}
     exit
 fi
 
 if [ ! -w ~/.bashrc ]; then
     echo Cannot modify .bashrc
-    echo Please add the following line at the end .bashrc file: PATH=\$PATH:~/${PWD##*/}
+    echo Please add the following line at the end .bashrc file: PATH=\$PATH:${PWD}
     echo or add jbscripts to your PATH in other way
     exit
 fi
 
-echo PATH=\$PATH:~/${PWD##*/} | tee -a ~/.bashrc
+echo PATH=\$PATH:${PWD} | tee -a ~/.bashrc
 
 echo ~/.bashrc file have been modified
