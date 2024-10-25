@@ -1,4 +1,24 @@
-#!/usr/bin/jq -fRs
+#!/usr/bin/jq -fRn
+
+# script transforms git log to JSON format
+# works fine with git log options:
+# --format=fuller, --shortstat, --name-only
+# usage:
+# git log -1 --format=fuller --shortstat | gitlog2json.jq
+# {
+#   "commit": "cfb2c827d9a3214eee08974ae09cbf18e3002699",
+#   "Author": "Jan Bobrowski <janbobrowski@gmail.com>",
+#   "AuthorDate": "Sat Oct 19 19:19:57 2024 +0200",
+#   "Commit": "Jan Bobrowski <janbobrowski@gmail.com>",
+#   "CommitDate": "Sat Oct 19 19:19:57 2024 +0200",
+#   "stats": {
+#     "files changed": 1,
+#     "insertions(+)": 1,
+#     "deletions(-)": 1
+#   },
+#   "message": "jsondiff_all.jq: show equal values as single value"
+# }
+
 
 # splits array on rows fulfilling given condition
 # each row fulfilling condition starts a new subarray
@@ -29,25 +49,11 @@ def split_array_on_condition(condition):
 ]
 ;
 
-# script reads an input as a single string
-
-# split commits
-
-# add new line at the beginning to get the same for the first row
-"\n"+.
-|split("\ncommit ")[1:][]
-|split("\n")
-# split commit information into sections (each section starts with empty line)
-# add empty string to get the same in the first row
-|[""]+.
+[inputs,""]
+|split_array_on_condition(startswith("commit "))
+|.[][:-1]
 |split_array_on_condition(.=="")
-# last character of commit information is \n
-# - last line after split is always empty
-# and can be removed
-|.[:-1]
-# first row is always empty (empty row was used to split array)
-|map(.[1:])
-|(.[0][0]) as $commit
+|(.[0][0]|split("commit ")[1]) as $commit
 |(
   .[0][1:]
   |
@@ -58,17 +64,17 @@ def split_array_on_condition(condition):
   |add
 ) as $commit_info
 |(
-  .[1]
+  .[1][1:]
   |map(.[4:])
   |join("\n")
 ) as $message
 |(
-  if .[2] and (.[2]|map(test("^[ +-]";"")|not)|all) then .[2]
+  if .[2] and (.[2]|map(test("^[ +-]";"")|not)|all) then .[2][1:]
   else null end
 ) as $changed_files
 |(
-  if .[2] and (.[2]|length==1) and .[2][0][:1]==" " then
-    .[2][0][1:]
+  if .[2] and (.[2]|length==2) and .[2][1][:1]==" " then
+    .[2][1][1:]
     |split(", ")
     |map({(split(" ")[1:]|join(" ")|sub("file ";"files ")|sub("insertion\\(";"insertions(")|sub("deletion\\(";"deletions(")):split(" ")[0]|tonumber})
     |add
