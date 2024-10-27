@@ -50,7 +50,8 @@ transforms git log to JSON format \
 works fine with git log options:
 --format=fuller, --shortstat, --name-only
 ```
-$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only | gitlog2json.jq
+$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only \
+| gitlog2json.jq
 {
   "commit": "62661d60d178ed9fd1ff96b0fac520a1816d9563",
   "Author": "Jan Bobrowski <janbobrowski@gmail.com>",
@@ -69,7 +70,8 @@ transform_json2stream.sh
 $ transform_json2stream.sh -h
 Transforms JSON to the stream of [<path>, <leaf-value>] which is also a JSON.
 Reads from the standard input.
-$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only | gitlog2json.jq | transform_json2stream.sh 
+$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only \
+| gitlog2json.jq | transform_json2stream.sh
 [["commit"],"62661d60d178ed9fd1ff96b0fac520a1816d9563"]
 [["Author"],"Jan Bobrowski <janbobrowski@gmail.com>"]
 [["Date"],"Sat Jun 22 17:31:08 2024 +0200"]
@@ -84,7 +86,8 @@ transform_stream2json.sh
 $ transform_stream2json.sh -h
 Transforms the stream of [<path>, <leaf-value>] to JSON.
 Reads from the standard input.
-$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only | gitlog2json.jq | transform_json2stream.sh | grep 2 | transform_stream2json.sh 
+$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only \
+| gitlog2json.jq | transform_json2stream.sh | grep 2 | transform_stream2json.sh
 {
   "commit": "62661d60d178ed9fd1ff96b0fac520a1816d9563",
   "Date": "Sat Jun 22 17:31:08 2024 +0200",
