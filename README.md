@@ -50,18 +50,49 @@ transforms git log to JSON format \
 works fine with git log options:
 --format=fuller, --shortstat, --name-only
 ```
-git log -1 --format=fuller --shortstat | gitlog2json.jq
+$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only | gitlog2json.jq
 {
-  "commit": "cfb2c827d9a3214eee08974ae09cbf18e3002699",
+  "commit": "62661d60d178ed9fd1ff96b0fac520a1816d9563",
   "Author": "Jan Bobrowski <janbobrowski@gmail.com>",
-  "AuthorDate": "Sat Oct 19 19:19:57 2024 +0200",
-  "Commit": "Jan Bobrowski <janbobrowski@gmail.com>",
-  "CommitDate": "Sat Oct 19 19:19:57 2024 +0200",
-  "stats": {
-    "files changed": 1,
-    "insertions(+)": 1,
-    "deletions(-)": 1
-  },
-  "message": "jsondiff_all.jq: show equal values as single value"
+  "Date": "Sat Jun 22 17:31:08 2024 +0200",
+  "changed_files": [
+    "remove_carriage_return.sh",
+    "remove_trailing_whitespace.sh",
+    "transform_json2stream.sh",
+    "transform_stream2json.sh"
+  ],
+  "message": "added remove scripts and renamed other scripts"
+}
+```
+transform_json2stream.sh
+```
+$ transform_json2stream.sh -h
+Transforms JSON to the stream of [<path>, <leaf-value>] which is also a JSON.
+Reads from the standard input.
+$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only | gitlog2json.jq | transform_json2stream.sh 
+[["commit"],"62661d60d178ed9fd1ff96b0fac520a1816d9563"]
+[["Author"],"Jan Bobrowski <janbobrowski@gmail.com>"]
+[["Date"],"Sat Jun 22 17:31:08 2024 +0200"]
+[["changed_files",0],"remove_carriage_return.sh"]
+[["changed_files",1],"remove_trailing_whitespace.sh"]
+[["changed_files",2],"transform_json2stream.sh"]
+[["changed_files",3],"transform_stream2json.sh"]
+[["message"],"added remove scripts and renamed other scripts"]
+```
+transform_stream2json.sh
+```
+$ transform_stream2json.sh -h
+Transforms the stream of [<path>, <leaf-value>] to JSON.
+Reads from the standard input.
+$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only | gitlog2json.jq | transform_json2stream.sh | grep 2 | transform_stream2json.sh 
+{
+  "commit": "62661d60d178ed9fd1ff96b0fac520a1816d9563",
+  "Date": "Sat Jun 22 17:31:08 2024 +0200",
+  "changed_files": [
+    null,
+    null,
+    "transform_json2stream.sh",
+    "transform_stream2json.sh"
+  ]
 }
 ```
