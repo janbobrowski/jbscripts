@@ -76,8 +76,19 @@ def split_array_on_condition(condition):
   if .[2] and (.[2]|length==2) and .[2][1][:1]==" " then
     .[2][1][1:]
     |split(", ")
-    |map({(split(" ")[1:]|join(" ")|sub("file ";"files ")|sub("insertion\\(";"insertions(")|sub("deletion\\(";"deletions(")):split(" ")[0]|tonumber})
-    |add
+    |map(
+      {
+        (
+          split(" ")[1:]|join(" ")
+          |sub("file ";"files ")
+          |sub("insertion\\(";"insertions(")
+          |sub("deletion\\(";"deletions(")
+        )
+        :
+        split(" ")[0]|tonumber
+      }
+    )
+  |add
   else null end
 ) as $stats
 |{$commit}+$commit_info+{$changed_files}+{$stats}+{$message}
