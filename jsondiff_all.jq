@@ -1,4 +1,4 @@
-#!/usr/bin/jq -fs
+#!/usr/bin/env -S jq -fs
 
 def create_compare_stream($n):
 [

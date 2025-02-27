@@ -1,4 +1,4 @@
-#!/usr/bin/jq -fnrc
+#!/usr/bin/env -S jq -fnrc
 
 def array_subtraction($a1;$a2):
   reduce ($a2|reverse[]) as $item (

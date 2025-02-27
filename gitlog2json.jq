@@ -1,5 +1,4 @@
-#!/usr/bin/jq -fRn
-
+#!/usr/bin/env -S jq -fRn
 # script transforms git log to JSON format
 # works fine with git log options:
 # --format=fuller, --shortstat, --name-only

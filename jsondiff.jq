@@ -1,4 +1,4 @@
-#!/usr/bin/jq -fs
+#!/usr/bin/env -S jq -fs
 
 # script compares two first values from the input stream (other values are ignored)
 # for the objects with similar structure
