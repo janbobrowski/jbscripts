@@ -99,3 +99,17 @@ $ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only 
   ]
 }
 ```
+
+extensions_summary.jq
+```
+$ find . -type f | ./extensions_summary.jq
+30 
+13 sample
+ 9 sh
+ 5 jq
+ 1 idx
+ 1 md
+ 1 pack
+ 1 txt
+
+```
