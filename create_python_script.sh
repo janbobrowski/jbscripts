@@ -35,6 +35,6 @@ if [ -f "${output_script_name}" ]; then
   exit 0
 fi
 
-jq -nr '"#!/usr/bin/python3"' | install --mod=755 /dev/stdin "${output_script_name}"
+jq -nr '"#!/usr/bin/env python3"' | install --mod=755 /dev/stdin "${output_script_name}"
 
 echo "Created script ${output_script_name}"
