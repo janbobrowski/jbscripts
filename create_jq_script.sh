@@ -30,7 +30,7 @@ else
   echo "Using default script name: $output_script_name"
 fi
 
-if [ -f "${output_script_name}" ]; then
+if [ -e "${output_script_name}" ]; then
   echo "Script ${output_script_name}" already exists
   exit 0
 fi
