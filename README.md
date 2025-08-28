@@ -65,21 +65,16 @@ $ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only 
   "message": "added remove scripts and renamed other scripts"
 }
 ```
-transform_json2stream.sh
+2streamjson.sh
 ```
-$ transform_json2stream.sh -h
+$ 2streamjson.sh -h
 Transforms JSON to the stream of [<path>, <leaf-value>] which is also a JSON.
 Reads from the standard input.
-$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only \
-| gitlog2json.jq | transform_json2stream.sh
-[["commit"],"62661d60d178ed9fd1ff96b0fac520a1816d9563"]
+$ git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e | gitlog2json.jq | jq  -r --stream 'select(length==2)|tostring' | jq -c
+[["commit"],"901e2eeeb817c69d04e3375a0e79a90fc976b90e"]
 [["Author"],"Jan Bobrowski <janbobrowski@gmail.com>"]
-[["Date"],"Sat Jun 22 17:31:08 2024 +0200"]
-[["changed_files",0],"remove_carriage_return.sh"]
-[["changed_files",1],"remove_trailing_whitespace.sh"]
-[["changed_files",2],"transform_json2stream.sh"]
-[["changed_files",3],"transform_stream2json.sh"]
-[["message"],"added remove scripts and renamed other scripts"]
+[["Date"],"Thu Aug 28 17:01:57 2025 +0200"]
+[["message"],"renamed transform_json2stream.sh to 2streamjson.sh"]
 ```
 transform_stream2json.sh
 ```
