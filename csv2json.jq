@@ -37,13 +37,15 @@ def transform_csv_line_to_array:
 # csv does not contain headers - transform each line to array
 if $ARGS.positional|map(.!="headers")|all then
     inputs|transform_csv_line_to_array
+    # transform strings to numbers where it is possible
+    |map(tonumber? //.)
 # first line contains headers - transform each line to object
 else
     # first line contains column names
     input|transform_csv_line_to_array as $headers
     |inputs|transform_csv_line_to_array
-    # transform strings to numbers or JSON where it is possible
-    |map(fromjson? //.)
+    # transform strings to numbers where it is possible
+    |map(tonumber? //.)
     # transform arrays to objects using names from the first line
     |with_entries(.key=$headers[.key])
 end

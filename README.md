@@ -1,7 +1,7 @@
 # jbscripts
 various scripts, mosty bash with jq
 
-Installation:
+ - Installation:
 ```
 $ git clone https://github.com/janbobrowski/jbscripts
 Cloning into 'jbscripts'...
@@ -18,7 +18,7 @@ PATH=$PATH:/home/jan/jbscripts
 /home/jan/.bashrc file have been modified
 running source /home/jan/.bashrc
 ```
-create_bash_script.sh
+ - create_bash_script.sh
 ```
 $ create_bash_script.sh -h
 Creates a bash script with shebang line and 755 permissions.
@@ -27,7 +27,7 @@ $ create_bash_script.sh
 Using default script name: script.sh
 Created script script.sh
 ```
-create_jq_script.sh
+ - create_jq_script.sh
 ```
 $ create_jq_script.sh -h
 Creates a jq script with shebang line and 755 permissions.
@@ -36,7 +36,7 @@ $ create_jq_script.sh
 Using default script name: script.jq
 Created script script.jq
 ```
-create_python_script.sh
+ - create_python_script.sh
 ```
 $ create_python_script.sh -h
 Creates a python script with shebang line and 755 permissions
@@ -45,7 +45,25 @@ $ create_python_script.sh
 Using default script name: script.py
 Created script script.py
 ```
-gitlog2json.jq \
+ - csv2json.jq \
+transforms CSV to JSON \
+supports quoted values \
+produces JSON arrays by default:
+```
+$ printf 'a,b,c\n1,"2,3,4",5\nxxx,yyy,"zzz"\n' \
+| csv2json.jq
+["a","b","c"]
+[1,"2,3,4",5]
+["xxx","yyy","zzz"]
+```
+when given "--args headers" produces JSON objects, using first input row as keys:
+```
+$ printf 'a,b,c\n1,"2,3,4",5\nxxx,yyy,"zzz"\n' \
+| csv2json.jq --args headers
+{"a":1,"b":"2,3,4","c":5}
+{"a":"xxx","b":"yyy","c":"zzz"}
+```
+ - gitlog2json.jq \
 transforms git log to JSON format \
 works fine with git log options:
 --format=fuller, --shortstat, --name-only
@@ -62,7 +80,7 @@ $  git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e --name-only
   "message": "renamed transform_json2stream.sh to 2streamjson.sh"
 }
 ```
-2streamjson.sh
+ - 2streamjson.sh
 ```
 $ 2streamjson.sh -h
 Transforms JSON to the stream of [<path>, <leaf-value>] which is also a JSON.
@@ -76,7 +94,7 @@ $ git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e --name-only 
 [["changed_files",0],"2streamjson.sh"]
 [["message"],"renamed transform_json2stream.sh to 2streamjson.sh"]
 ```
-2jsonstream.sh
+ - 2jsonstream.sh
 ```
 $ 2jsonstream.sh -h
 Transforms the stream of [<path>, <leaf-value>] to JSON.
@@ -91,8 +109,7 @@ $ git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e --name-only 
   "message": "renamed transform_json2stream.sh to 2streamjson.sh"
 }
 ```
-
-extensions_summary.jq
+ - extensions_summary.jq
 ```
 $ find . -type f | ./extensions_summary.jq
 30 
