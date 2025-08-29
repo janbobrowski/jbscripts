@@ -50,19 +50,16 @@ transforms git log to JSON format \
 works fine with git log options:
 --format=fuller, --shortstat, --name-only
 ```
-$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only \
+$  git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e --name-only \
 | gitlog2json.jq
 {
-  "commit": "62661d60d178ed9fd1ff96b0fac520a1816d9563",
+  "commit": "901e2eeeb817c69d04e3375a0e79a90fc976b90e",
   "Author": "Jan Bobrowski <janbobrowski@gmail.com>",
-  "Date": "Sat Jun 22 17:31:08 2024 +0200",
+  "Date": "Thu Aug 28 17:01:57 2025 +0200",
   "changed_files": [
-    "remove_carriage_return.sh",
-    "remove_trailing_whitespace.sh",
-    "transform_json2stream.sh",
-    "transform_stream2json.sh"
+    "2streamjson.sh"
   ],
-  "message": "added remove scripts and renamed other scripts"
+  "message": "renamed transform_json2stream.sh to 2streamjson.sh"
 }
 ```
 2streamjson.sh
@@ -70,28 +67,28 @@ $ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only 
 $ 2streamjson.sh -h
 Transforms JSON to the stream of [<path>, <leaf-value>] which is also a JSON.
 Reads from the standard input.
-$ git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e | gitlog2json.jq | jq  -r --stream 'select(length==2)|tostring' | jq -c
+$ git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e --name-only \
+| gitlog2json.jq \
+| 2streamjson.sh
 [["commit"],"901e2eeeb817c69d04e3375a0e79a90fc976b90e"]
 [["Author"],"Jan Bobrowski <janbobrowski@gmail.com>"]
 [["Date"],"Thu Aug 28 17:01:57 2025 +0200"]
+[["changed_files",0],"2streamjson.sh"]
 [["message"],"renamed transform_json2stream.sh to 2streamjson.sh"]
 ```
-transform_stream2json.sh
+2jsonstream.sh
 ```
-$ transform_stream2json.sh -h
+$ 2jsonstream.sh -h
 Transforms the stream of [<path>, <leaf-value>] to JSON.
 Reads from the standard input.
-$ git -C jbscripts/ log -1 62661d60d178ed9fd1ff96b0fac520a1816d9563 --name-only \
-| gitlog2json.jq | transform_json2stream.sh | grep 2 | transform_stream2json.sh
+$ git -C jbscripts/ log -1 901e2eeeb817c69d04e3375a0e79a90fc976b90e --name-only \
+| gitlog2json.jq | 2streamjson.sh | grep sh \
+| 2jsonstream.sh
 {
-  "commit": "62661d60d178ed9fd1ff96b0fac520a1816d9563",
-  "Date": "Sat Jun 22 17:31:08 2024 +0200",
   "changed_files": [
-    null,
-    null,
-    "transform_json2stream.sh",
-    "transform_stream2json.sh"
-  ]
+    "2streamjson.sh"
+  ],
+  "message": "renamed transform_json2stream.sh to 2streamjson.sh"
 }
 ```
 
