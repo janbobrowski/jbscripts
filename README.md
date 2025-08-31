@@ -18,50 +18,21 @@ PATH=$PATH:/home/jan/jbscripts
 /home/jan/.bashrc file have been modified
 running source /home/jan/.bashrc
 ```
- - create_bash_script.sh
+ - csv2json.jq
 ```
-$ create_bash_script.sh -h
-Creates a bash script with shebang line and 755 permissions.
-Usage: ./create_bash_script.sh [output_script_name=script.sh]
-$ create_bash_script.sh
-Using default script name: script.sh
-Created script script.sh
-```
- - create_jq_script.sh
-```
-$ create_jq_script.sh -h
-Creates a jq script with shebang line and 755 permissions.
-Usage: ./create_jq_script.sh [output_script_name=script.jq]
-$ create_jq_script.sh
-Using default script name: script.jq
-Created script script.jq
-```
- - create_python_script.sh
-```
-$ create_python_script.sh -h
-Creates a python script with shebang line and 755 permissions
-Usage: ./create_python_script.sh [output_script_name=script.py]
-$ create_python_script.sh
-Using default script name: script.py
-Created script script.py
-```
- - csv2json.jq \
-transforms CSV to JSON \
-supports quoted values \
+csv2json.jq --args help
+transforms CSV to JSON
+reads from a file or standard input
+supports quoted values
 produces JSON arrays by default:
-```
-$ printf 'a,b,c\n1,"2,3,4",5\nxxx,yyy,"zzz"\n' \
-| csv2json.jq
-["a","b","c"]
-[1,"2,3,4",5]
-["xxx","yyy","zzz"]
-```
-when given "--args headers" produces JSON objects, using first input row as keys:
-```
-$ printf 'a,b,c\n1,"2,3,4",5\nxxx,yyy,"zzz"\n' \
-| csv2json.jq --args headers
-{"a":1,"b":"2,3,4","c":5}
-{"a":"xxx","b":"yyy","c":"zzz"}
+  $ csv2json.jq <<< $(printf 'a,b,c\n1,"2,3,4",5\nxxx,yyy,"zzz"\n')
+  ["a","b","c"]
+  [1,"2,3,4",5]
+  ["xxx","yyy","zzz"]
+when given "--args headers" produces JSON objects, using the first input row as keys:
+  $ csv2json.jq --args headers <<< $(printf 'a,b,c\n1,"2,3,4",5\nxxx,yyy,"zzz"\n')
+  {"a":1,"b":"2,3,4","c":5}
+  {"a":"xxx","b":"yyy","c":"zzz"}
 ```
  - gitlog2json.jq \
 transforms git log to JSON format \
@@ -121,4 +92,31 @@ $ find . -type f | ./extensions_summary.jq
  1 pack
  1 txt
 
+```
+ - create_bash_script.sh
+```
+$ create_bash_script.sh -h
+Creates a bash script with shebang line and 755 permissions.
+Usage: ./create_bash_script.sh [output_script_name=script.sh]
+$ create_bash_script.sh
+Using default script name: script.sh
+Created script script.sh
+```
+ - create_jq_script.sh
+```
+$ create_jq_script.sh -h
+Creates a jq script with shebang line and 755 permissions.
+Usage: ./create_jq_script.sh [output_script_name=script.jq]
+$ create_jq_script.sh
+Using default script name: script.jq
+Created script script.jq
+```
+ - create_python_script.sh
+```
+$ create_python_script.sh -h
+Creates a python script with shebang line and 755 permissions
+Usage: ./create_python_script.sh [output_script_name=script.py]
+$ create_python_script.sh
+Using default script name: script.py
+Created script script.py
 ```

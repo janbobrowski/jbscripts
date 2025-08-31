@@ -1,4 +1,4 @@
-#!/usr/bin/env -S jq -fRcn
+#!/usr/bin/env -S jq -fRrcn
 
 def parse_csv_line_with_quotes:
     # if line in csv file uses double quotes as it is described in https://www.ietf.org/rfc/rfc4180.txt
@@ -34,8 +34,23 @@ def transform_csv_line_to_array:
     if contains("\"") then parse_csv_line_with_quotes else split(",") end
 ;
 
+if $ARGS.positional|map(.=="help")|any then
+"transforms CSV to JSON",
+"reads from a file or standard input",
+"supports quoted values",
+"produces JSON arrays by default:",
+"  $ csv2json.jq <<< $(printf 'a,b,c\\n1,\"2,3,4\",5\\nxxx,yyy,\"zzz\"\\n')",
+"  [\"a\",\"b\",\"c\"]",
+"  [1,\"2,3,4\",5]",
+"  [\"xxx\",\"yyy\",\"zzz\"]",
+"when given \"--args headers\" produces JSON objects, using the first input row as keys:",
+"  $ csv2json.jq --args headers <<< $(printf 'a,b,c\\n1,\"2,3,4\",5\\nxxx,yyy,\"zzz\"\\n')",
+"  {\"a\":1,\"b\":\"2,3,4\",\"c\":5}",
+"  {\"a\":\"xxx\",\"b\":\"yyy\",\"c\":\"zzz\"}"
+
+
 # csv does not contain headers - transform each line to array
-if $ARGS.positional|map(.!="headers")|all then
+elif $ARGS.positional|map(.!="headers")|all then
     inputs|transform_csv_line_to_array
     # transform strings to numbers where it is possible
     |map(tonumber? //.)
